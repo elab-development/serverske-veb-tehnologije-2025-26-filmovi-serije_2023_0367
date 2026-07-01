@@ -8,3 +8,6 @@ Route::get('/external/omdb', [ExternalApiController::class, 'searchOmdb']);
 
 // Ruta za dobijanje popularnih filmova preko TMDB servisa
 Route::get('/external/tmdb/popular', [ExternalApiController::class, 'getPopularTmdb']);
+
+// Ruta za upload postera
+Route::post('/movies/upload-poster', [MoviePosterController::class, 'uploadPoster']);
