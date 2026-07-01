@@ -97,7 +97,6 @@ class ReviewController extends Controller
             return response()->json(['error' => 'Korisnik nije pronađen.'], 404);
         }
 
-        // Pretpostavka je da model User ima definisanu belongsToMany relaciju 'favorites' ka modelu Movie
         $favorites = $user->favorites()->get();
 
         return response()->json([
