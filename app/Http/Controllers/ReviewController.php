@@ -89,4 +89,21 @@ class ReviewController extends Controller
 
         return response()->json(['success' => 'Recenzija uspešno izmenjena.', 'data' => $review], 200);
     }
+
+    public function userFavorites($userId): JsonResponse
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['error' => 'Korisnik nije pronađen.'], 404);
+        }
+
+        // Pretpostavka je da model User ima definisanu belongsToMany relaciju 'favorites' ka modelu Movie
+        $favorites = $user->favorites()->get();
+
+        return response()->json([
+            'success' => true,
+            'user' => $user->name,
+            'data' => $favorites
+        ], 200);
+    }
 }
