@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExternalApiController;
+use App\Http\Controllers\MoviePosterController;
 use Illuminate\Support\Facades\Route;
 
 // Ruta za pretragu filmova preko OMDB servisa
