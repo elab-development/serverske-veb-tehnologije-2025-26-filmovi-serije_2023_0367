@@ -32,7 +32,7 @@ Route::post('/register', function (Request $request) {
 Route::post('/login', function (Request $request) {
     $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::PI_MATCH ?? !Hash::check($request->password, $user->password)) {
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json(['message' => 'Pogrešni podaci'], 401);
     }
 

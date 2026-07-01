@@ -7,6 +7,7 @@ use App\Models\Movie;
 use App\Http\Requests\StoreReviewRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ReviewController extends Controller
 {
