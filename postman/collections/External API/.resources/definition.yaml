@@ -1,0 +1,5 @@
+$kind: collection
+name: External API
+variables:
+  - key: base_url
+    value: 'http://localhost'

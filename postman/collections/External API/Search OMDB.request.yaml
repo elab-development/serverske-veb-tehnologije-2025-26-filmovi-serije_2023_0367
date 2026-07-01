@@ -1,0 +1,5 @@
+$kind: http-request
+name: Search OMDB
+method: GET
+url: '{{base_url}}/api/external/omdb'
+order: 1000
