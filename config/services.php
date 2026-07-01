@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+	'omdb' => [
+        'key' => env('OMDB_API_KEY'),
+    ],
+
+    'tmdb' => [
+        'token' => env('TMDB_API_TOKEN'),
+    ],
 
 ];
