@@ -13,6 +13,7 @@ class MovieFactory extends Factory
             'description' => $this->faker->paragraph(),
             'year' => $this->faker->numberBetween(1990, 2026),
             'poster_path' => 'posters/placeholder.jpg',
+            'genre_id' => Genre::inRandomOrder()->first()->id ?? Genre::factory(),
         ];
     }
 }
