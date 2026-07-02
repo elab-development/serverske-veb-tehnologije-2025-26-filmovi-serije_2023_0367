@@ -54,6 +54,18 @@ class MovieController extends Controller
         return response()->json($movie, 200);
     }
 
+    public function topRated()
+    {
+        // Povlači filmove, računa prosečnu ocenu iz tabele reviews, sortira opadajuće i uzima top 5
+        $topMovies = Movie::with('genre')
+            ->withAvg('reviews', 'rating') 
+            ->orderBy('reviews_avg_rating', 'desc')
+            ->take(5)
+            ->get();
+
+        return response()->json($topMovies, 200);
+    }
+
     /**
      * Kreiranje novog filma (Admin)
      */
