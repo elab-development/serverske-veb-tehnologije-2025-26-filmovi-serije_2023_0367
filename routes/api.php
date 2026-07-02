@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\AuthController;
 
 require __DIR__ . '/api_movies.php';
 require __DIR__ . '/api_reviews.php';
@@ -40,6 +41,9 @@ Route::post('/login', function (Request $request) {
 
     return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
 });
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::get('/user', function (Request $request) {
     return $request->user();
