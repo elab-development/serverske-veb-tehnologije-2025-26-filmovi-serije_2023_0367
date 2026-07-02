@@ -1,0 +1,9 @@
+$kind: http-request
+name: http://localhost:8000/api/external/omdb
+url: http://localhost:8000/api/external/omdb?title=The Sopranos
+method: GET
+queryParams:
+  - key: title
+    value: The Sopranos
+    disabled: false
+order: 1782936546896

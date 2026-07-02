@@ -1,0 +1,14 @@
+$kind: http-request
+name: http://localhost:8000/api/movies/upload-poster
+url: http://localhost:8000/api/movies/upload-poster
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: poster
+      src:
+        - postman-cloud:///1f17546d-ee02-4cb0-9157-7366fe2d82d2
+      description: ""
+      disabled: false
+order: 3791532421540793

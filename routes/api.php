@@ -48,6 +48,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+require __DIR__ . '/api_external.php';
 Route::post('/genres', function (Request $request) {
     return \App\Models\Genre::create(['name' => 'Action']);
 });
