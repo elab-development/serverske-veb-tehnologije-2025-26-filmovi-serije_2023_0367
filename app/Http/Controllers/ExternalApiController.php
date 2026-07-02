@@ -19,7 +19,7 @@ class ExternalApiController extends Controller
         $apiKey = config('services.omdb.key');
         
         // Slanje GET zahteva na OMDB API
-        $response = Http::get("http://www.omdbapi.com/", [
+        $response = Http::withoutVerifying()->get("http://www.omdbapi.com/", [
             'apikey' => $apiKey,
             't' => $title
         ]);
@@ -36,8 +36,9 @@ class ExternalApiController extends Controller
     {
         $token = config('services.tmdb.token');
 
-        // Slanje GET zahteva sa Bearer tokenom u zaglavlju
-        $response = Http::withToken($token)
+        // Slanje GET zahteva sa Bearer tokenom u zaglavlju (zaobilazimo SSL verifikaciju lokalno na Windows/XAMPP)
+        $response = Http::withoutVerifying()
+            ->withToken($token)
             ->get("https://api.themoviedb.org/3/movie/popular", [
                 'language' => 'en-US',
                 'page' => 1

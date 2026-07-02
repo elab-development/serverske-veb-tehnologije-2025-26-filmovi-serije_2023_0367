@@ -1,58 +1,122 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎬 Laravel Backend - Filmovi & Serije
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ovaj repozitorijum predstavlja jedinstveni Laravel backend projekat koji pokriva zahteve za **Domaći zadatak** i **Seminarski rad** iz predmeta *Serverske veb tehnologije*.
 
-## About Laravel
+Projekat je razvijen kao REST API i služi za upravljanje filmovima, žanrovima, recenzijama i omiljenim sadržajem, uz integraciju sa eksternim servisima (TMDB i OMDB) i naprednim funkcionalnostima poput uvoza fajlova (poster) i kompleksnih DB operacija.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Tehnologije i Biblioteke
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: Laravel 11 (PHP 8.2+)
+- **Baza podataka**: MySQL (XAMPP)
+- **Autentifikacija**: Laravel Sanctum
+- **Klijent za testiranje**: Postman
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Instalacija i Pokretanje Lokalno
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Pratite sledeće korake kako biste podesili projekat na svom računaru:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Kloniranje projekta i instalacija zavisnosti
 ```bash
-composer require laravel/boost --dev
+# Klonirajte repozitorijum
+git clone <url-repozitorijuma>
+cd serverske-veb-tehnologije-2025-26-filmovi-serije
 
-php artisan boost:install
+# Instalirajte PHP zavisnosti
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Podešavanje baze i `.env` datoteke
+1. Pokrenite **XAMPP Control Panel** i startujte **Apache** i **MySQL**.
+2. Otvorite [phpMyAdmin](http://localhost/phpmyadmin) u browseru.
+3. Kreirajte novu bazu podataka pod nazivom `filmovi_serije`.
+4. Kopirajte `.env.example` u `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+5. Otvorite `.env` i proverite/podesite sledeće varijable:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=filmovi_serije
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+6. Generišite ključ aplikacije:
+   ```bash
+   php artisan key:generate
+   ```
 
-## Contributing
+### 3. Migracije i Seeding (Demo podaci)
+Pokrenite migracije kako biste kreirali sve tabele (uključujući novododate tipove migracija za izmenu kolona, spoljne ključeve i pivot tabele) i ubacili početne demo podatke (korisnike sa različitim ulogama, filmove, žanrove):
+```bash
+php artisan migrate --seed
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Linkovanje Storage-a (za Upload Postera)
+Kako bi slike koje korisnik upload-uje preko API-ja bile javno dostupne, kreirajte simbolički link:
+```bash
+php artisan storage:link
+```
 
-## Code of Conduct
+### 5. Pokretanje razvojnog servera
+Pokrenite lokalni Laravel server:
+```bash
+php artisan serve
+```
+Server će raditi na adresi `http://127.0.0.1:8000`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📬 Postman Kolekcija
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Svi API endpointi su dokumentovani i mogu se direktno testirati.
+- Kolekcija i globalne promenljive se nalaze u folderu `postman/`.
+- Možete ih uvesti u svoj Postman (**Import** -> izaberite fajlove iz foldera `postman/collections/` i `postman/globals/`).
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔒 Korisničke Uloge (Role) i Kredencijali za Testiranje
+
+Nakon pokretanja seeder-a, u bazi ćete imati sledeće korisnike:
+
+| Uloga (Role) | Email | Lozinka | Opis |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@gmail.com` | `password` | Ima pristup CRUD operacijama nad filmovima (kreiranje, izmena, brisanje). |
+| **Moderator** | `mod@gmail.com` | `password` | Pomoćna uloga u bazi podataka. |
+| **Korisnik (User)** | `user@gmail.com` | `password` | Može pisati recenzije i dodavati filmove u omiljene (favorites). |
+| **Gost (Guest)** | *Nema* | *Nema* | Može pretraživati filmove, gledati pojedinačne detalje i listati žanrove. |
+
+---
+
+## 📊 Pregled API Ruta
+
+### 🔐 Autentifikacija
+- `POST /api/register` - Registracija novog korisnika
+- `POST /api/login` - Prijava i dobijanje Sanctum tokena
+- `POST /api/logout` - Odjava (zahteva Sanctum token)
+
+### 🎬 Filmovi (Movies)
+- `GET /api/movies` - Prikaz filmova sa paginacijom, filterima (žanr, godina) i pretragom (`search`)
+- `GET /api/movies/top-rated` - Top 5 najbolje ocenjenih filmova (eksplozivan 4-table SQL JOIN upit sa agregacijom)
+- `GET /api/movies/{id}` - Prikaz detalja pojedinačnog filma
+- `POST /api/movies` - Kreiranje novog filma (**samo Admin**)
+- `PUT /api/movies/{id}` - Izmena filma (**samo Admin**)
+- `DELETE /api/movies/{id}` - Brisanje filma (**samo Admin**)
+
+### 📝 Recenzije i Favoriti (Reviews & Favorites)
+- `GET /api/movies/{movie}/reviews` - Prikaz recenzija za određeni film (Ugnježdena ruta)
+- `POST /api/reviews` - Dodavanje nove recenzije (Ulogovan korisnik, XSS zaštita)
+- `DELETE /api/reviews/{id}` - Brisanje sopstvene recenzije
+- `GET /api/users/{id}/favorites` - Prikaz omiljenih filmova korisnika (Ugnježdena ruta)
+- `POST /api/favorites` - Dodavanje filma u omiljene
+- `DELETE /api/favorites/{id}` - Uklanjanje filma iz omiljenih
+
+### 🌐 Eksterni API-ji & Fajlovi
+- `GET /api/external/omdb?title=Inception` - Pretraga filma na OMDB javnom API-ju
+- `GET /api/external/tmdb/popular` - Popularni filmovi sa TMDB javnog API-ja
+- `POST /api/movies/upload-poster` - Upload postera na lokalni server (vraća URL slike)

@@ -56,9 +56,29 @@ class MovieController extends Controller
 
     public function topRated()
     {
-        // Povlači filmove, računa prosečnu ocenu iz tabele reviews, sortira opadajuće i uzima top 5
-        $topMovies = Movie::with('genre')
-            ->withAvg('reviews', 'rating') 
+        // Eksplicitni JOIN upit nad 4 povezane tabele: movies, genres, reviews, users (zahtev za višu ocenu)
+        $topMovies = \Illuminate\Support\Facades\DB::table('movies')
+            ->join('genres', 'movies.genre_id', '=', 'genres.id')
+            ->leftJoin('reviews', 'movies.id', '=', 'reviews.movie_id')
+            ->leftJoin('users', 'reviews.user_id', '=', 'users.id')
+            ->select(
+                'movies.id',
+                'movies.title',
+                'movies.description',
+                'movies.year',
+                'movies.poster_path',
+                'genres.name as genre_name',
+                \Illuminate\Support\Facades\DB::raw('COALESCE(AVG(reviews.rating), 0) as reviews_avg_rating'),
+                \Illuminate\Support\Facades\DB::raw('COUNT(reviews.id) as reviews_count')
+            )
+            ->groupBy(
+                'movies.id',
+                'movies.title',
+                'movies.description',
+                'movies.year',
+                'movies.poster_path',
+                'genres.name'
+            )
             ->orderBy('reviews_avg_rating', 'desc')
             ->take(5)
             ->get();

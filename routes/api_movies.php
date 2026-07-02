@@ -3,17 +3,14 @@
 use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
-// Rute dostupne svima (Gosti i ulogovani)
-Route::get('movies', [MovieController::class, 'index']);
+// Custom rute van resource kontrolera
 Route::get('movies/top-rated', [MovieController::class, 'topRated']);
-Route::get('movies/{id}', [MovieController::class, 'show']);
-
-// Rute za žanrove (Možeš ih staviti u isti kontroler radi jednostavnosti)
 Route::get('genres', [MovieController::class, 'indexGenres']);
 
-// Zaštićene rute - Samo AUTENTIFIKOVANI ADMINI mogu da menjaju podatke
+// Resource ruta za javne akcije (indeks i prikaz jednog filma)
+Route::apiResource('movies', MovieController::class)->only(['index', 'show']);
+
+// Zaštićene resource rute za administrativne akcije
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::post('movies', [MovieController::class, 'store']);
-    Route::put('movies/{id}', [MovieController::class, 'update']);
-    Route::delete('movies/{id}', [MovieController::class, 'destroy']);
+    Route::apiResource('movies', MovieController::class)->except(['index', 'show']);
 });
