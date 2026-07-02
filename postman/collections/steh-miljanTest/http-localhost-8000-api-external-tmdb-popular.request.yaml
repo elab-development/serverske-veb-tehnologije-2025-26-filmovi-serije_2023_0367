@@ -1,0 +1,5 @@
+$kind: http-request
+name: http://localhost:8000/api/external/tmdb/popular
+url: http://localhost:8000/api/external/tmdb/popular
+method: GET
+order: 74951541323523
