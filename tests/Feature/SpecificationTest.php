@@ -331,4 +331,54 @@ class SpecificationTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('movies', ['id' => $movieId]);
     }
+
+    public function test_movies_top_rated()
+    {
+        $genre = Genre::create(['name' => 'Sci-Fi']);
+        $user = User::create([
+            'name' => 'Reviewer',
+            'email' => 'reviewer@example.com',
+            'password' => bcrypt('password123'),
+        ]);
+
+        // Create 6 movies
+        $movies = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $movies[$i] = Movie::create([
+                'title' => "Movie {$i}",
+                'year' => 2000 + $i,
+                'genre_id' => $genre->id,
+            ]);
+        }
+
+        // Add reviews with different ratings to make averages distinct
+        Review::create(['text' => 'Great!', 'rating' => 5, 'movie_id' => $movies[1]->id, 'user_id' => $user->id]);
+        Review::create(['text' => 'Good!', 'rating' => 4, 'movie_id' => $movies[2]->id, 'user_id' => $user->id]);
+        Review::create(['text' => 'Okay!', 'rating' => 3, 'movie_id' => $movies[3]->id, 'user_id' => $user->id]);
+        Review::create(['text' => 'Bad!', 'rating' => 2, 'movie_id' => $movies[4]->id, 'user_id' => $user->id]);
+        Review::create(['text' => 'Terrible!', 'rating' => 1, 'movie_id' => $movies[5]->id, 'user_id' => $user->id]);
+        Review::create(['text' => 'Worst!', 'rating' => 0, 'movie_id' => $movies[6]->id, 'user_id' => $user->id]);
+
+        // GET /api/movies/top-rated
+        $response = $this->getJson('/api/movies/top-rated');
+        $response->assertStatus(200);
+
+        // Should return maximum 5 movies
+        $data = $response->json();
+        $this->assertCount(5, $data);
+
+        // Checking descending order of average rating
+        $this->assertEquals('Movie 1', $data[0]['title']);
+        $this->assertEquals(5.0, $data[0]['reviews_avg_rating']);
+        
+        $this->assertEquals('Movie 2', $data[1]['title']);
+        $this->assertEquals(4.0, $data[1]['reviews_avg_rating']);
+
+        $this->assertEquals('Movie 5', $data[4]['title']);
+        $this->assertEquals(1.0, $data[4]['reviews_avg_rating']);
+        
+        // Movie 6 should not be in the top 5
+        $titles = collect($data)->pluck('title')->toArray();
+        $this->assertNotContains('Movie 6', $titles);
+    }
 }

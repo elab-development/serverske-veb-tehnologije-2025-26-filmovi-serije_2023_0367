@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // Rute dostupne svima (Gosti i ulogovani)
 Route::get('movies', [MovieController::class, 'index']);
+Route::get('movies/top-rated', [MovieController::class, 'topRated']);
 Route::get('movies/{id}', [MovieController::class, 'show']);
 
 // Rute za žanrove (Možeš ih staviti u isti kontroler radi jednostavnosti)
