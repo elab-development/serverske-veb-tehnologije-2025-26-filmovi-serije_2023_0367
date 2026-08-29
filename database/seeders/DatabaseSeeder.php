@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Unos 3 korisnika sa različitim ulogama (Ispunjavanje uslova za 3 role)
+        // Unos 3 korisnika sa različitim ulogama
         DB::table('users')->insertOrIgnore([
             [
                 'id' => 1,
@@ -42,14 +42,12 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // 2. Unos bazičnih žanrova
         DB::table('genres')->insertOrIgnore([
             ['id' => 1, 'name' => 'Akcija', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'name' => 'Komedija', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 3, 'name' => 'Sci-Fi', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // 3. Unos lažnih filmova sa mapiranim genre_id (Ispunjavanje uslova za movies)
         DB::table('movies')->insertOrIgnore([
             [
                 'id' => 1,
@@ -83,7 +81,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // 4. Unos testnih zapisa u omiljene (Tvoj deo posla - favorites pivot tabela)
         DB::table('favorites')->insertOrIgnore([
             ['user_id' => 1, 'movie_id' => 1],
             ['user_id' => 1, 'movie_id' => 2],

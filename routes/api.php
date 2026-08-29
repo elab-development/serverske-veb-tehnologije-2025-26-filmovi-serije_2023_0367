@@ -2,8 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\AuthController;
 
 require __DIR__ . '/api_movies.php';
@@ -17,7 +15,3 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-Route::post('/genres', function (Request $request) {
-    return \App\Models\Genre::create(['name' => 'Action']);
-});

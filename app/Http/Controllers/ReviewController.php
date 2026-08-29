@@ -7,6 +7,7 @@ use App\Models\Movie;
 use App\Http\Requests\StoreReviewRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 class ReviewController extends Controller
@@ -30,7 +31,14 @@ class ReviewController extends Controller
         $validated['text'] = strip_tags($validated['text']); // XSS Zaštita
         $validated['user_id'] = Auth::id();
 
-        $review = Review::create($validated);
+        // Transakcija: kreiranje recenzije + rekalkulacija prosecne ocene filma
+        // moraju uspeti zajedno, u suprotnom se sve ponistava (ROLLBACK)
+        $review = DB::transaction(function () use ($validated) {
+            $review = Review::create($validated);
+            $this->recalculateAvgRating($validated['movie_id']);
+            return $review;
+        });
+
         return response()->json(['success' => 'Recenzija uspesno kreirana.', 'data' => $review], 201);
     }
 
@@ -41,12 +49,24 @@ class ReviewController extends Controller
         if (!$review) {
             return response()->json(['error' => 'Recenzija ne postoji.'], 404);
         }
-
-        if ($review->user_id !== Auth::id()) {
+ 
+        $user = Auth::user();
+        $isOwner = $review->user_id === $user->id;
+        $canModerate = in_array($user->role, ['moderator', 'admin']);
+ 
+        // Autor sme da obrise svoju recenziju
+        // Moderator i admin smeju da obrisu BILO CIJU recenziju
+        if (!$isOwner && !$canModerate) {
             return response()->json(['error' => 'Nemate autorizaciju za brisanje.'], 403);
         }
-
-        $review->delete();
+ 
+        $movieId = $review->movie_id;
+ 
+        DB::transaction(function () use ($review, $movieId) {
+            $review->delete();
+            $this->recalculateAvgRating($movieId);
+        });
+ 
         return response()->json(['success' => 'Recenzija obrisana.'], 200);
     }
 
@@ -71,12 +91,10 @@ class ReviewController extends Controller
             return response()->json(['error' => 'Recenzija ne postoji.'], 404);
         }
 
-        // Sigurnosna provera: Samo autor može da menja svoju recenziju
         if ($review->user_id !== Auth::id()) {
             return response()->json(['error' => 'Nemate autorizaciju za izmenu ove recenzije.'], 403);
         }
 
-        // Validacija na licu mesta
         $validated = $request->validate([
             'text' => 'sometimes|required|string|min:5|max:1000',
             'rating' => 'sometimes|required|integer|min:1|max:5',
@@ -86,9 +104,12 @@ class ReviewController extends Controller
             $validated['text'] = strip_tags($validated['text']); // XSS Zaštita
         }
 
-        $review->update($validated);
+        DB::transaction(function () use ($review, $validated) {
+            $review->update($validated);
+            $this->recalculateAvgRating($review->movie_id);
+        });
 
-        return response()->json(['success' => 'Recenzija uspešno izmenjena.', 'data' => $review], 200);
+        return response()->json(['success' => 'Recenzija uspešno izmenjena.', 'data' => $review->fresh()], 200);
     }
 
     public function userFavorites($userId): JsonResponse
@@ -105,5 +126,18 @@ class ReviewController extends Controller
             'user' => $user->name,
             'data' => $favorites
         ], 200);
+    }
+
+    /**
+     * Rekalkulise i cuva prosecnu ocenu (avg_rating) filma na osnovu
+     * svih njegovih recenzija. Poziva se unutar DB transakcije.
+     */
+    private function recalculateAvgRating(int $movieId): void
+    {
+        $avg = Review::where('movie_id', $movieId)->avg('rating');
+
+        Movie::where('id', $movieId)->update([
+            'avg_rating' => $avg ? round($avg, 1) : null,
+        ]);
     }
 }
