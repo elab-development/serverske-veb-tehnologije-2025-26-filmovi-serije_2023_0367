@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\DB;
 class MovieController extends Controller
 {
     /**
-     * Prikaz svih filmova sa paginacijom, filtriranjem i pretragom
+     * GET /api/movies
+     * Prikaz svih filmova sa paginacijom, filtriranjem i sortiranjem
      */
     public function index(Request $request)
     {
@@ -36,32 +37,9 @@ class MovieController extends Controller
         return response()->json($movies, 200);
     }
 
-    public function show($id)
-    {
-        $movie = Movie::with('genre')->find($id);
-
-        if (!$movie) {
-            return response()->json(['message' => 'Film nije pronađen.'], 404);
-        }
-
-        return response()->json($movie, 200);
-    }
-
-    public function topRated()
-    {
-        $topMovies = Movie::with('genre')
-            ->withAvg('reviews', 'rating')
-            ->orderBy('reviews_avg_rating', 'desc')
-            ->take(5)
-            ->get();
-
-        return response()->json($topMovies, 200);
-    }
-
     /**
      * GET /api/movies/stats/genres
-     * Napredna manipulacija podacima: eksplicitni JOIN + agregacija + grupisanje.
-     * Za svaki zanr racuna broj filmova i prosecnu ocenu svih recenzija tih filmova.
+     * Statistika po žanru (JOIN + agregacija)
      */
     public function genreStats()
     {
@@ -81,6 +59,40 @@ class MovieController extends Controller
         return response()->json($stats, 200);
     }
 
+    /**
+     * GET /api/movies/top-rated
+     * Najbolje ocenjeni filmovi
+     */
+    public function topRated()
+    {
+        $topMovies = Movie::with('genre')
+            ->withAvg('reviews', 'rating')
+            ->orderBy('reviews_avg_rating', 'desc')
+            ->take(5)
+            ->get();
+
+        return response()->json($topMovies, 200);
+    }
+
+    /**
+     * GET /api/movies/{id}
+     * Prikaz pojedinačnog filma
+     */
+    public function show($id)
+    {
+        $movie = Movie::with('genre')->find($id);
+
+        if (!$movie) {
+            return response()->json(['message' => 'Film nije pronađen.'], 404);
+        }
+
+        return response()->json($movie, 200);
+    }
+
+    /**
+     * POST /api/movies
+     * Kreiranje novog filma (Admin)
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -97,6 +109,10 @@ class MovieController extends Controller
         return response()->json(['message' => 'Film uspešno kreiran.', 'data' => $movie], 201);
     }
 
+    /**
+     * PUT /api/movies/{id}
+     * Ažuriranje filma (Admin)
+     */
     public function update(Request $request, $id)
     {
         $movie = Movie::find($id);
@@ -119,6 +135,10 @@ class MovieController extends Controller
         return response()->json(['message' => 'Film uspešno ažuriran.', 'data' => $movie], 200);
     }
 
+    /**
+     * DELETE /api/movies/{id}
+     * Brisanje filma (Admin)
+     */
     public function destroy($id)
     {
         $movie = Movie::find($id);
@@ -132,12 +152,20 @@ class MovieController extends Controller
         return response()->json(['message' => 'Film uspešno obrisan.'], 200);
     }
 
+    /**
+     * GET /api/genres
+     * Prikaz svih žanrova
+     */
     public function indexGenres()
     {
         $genres = Genre::all();
         return response()->json($genres, 200);
     }
 
+    /**
+     * POST /api/genres
+     * Kreiranje žanra (Admin)
+     */
     public function storeGenre(Request $request)
     {
         $validated = $request->validate([
@@ -149,6 +177,10 @@ class MovieController extends Controller
         return response()->json(['message' => 'Žanr uspešno kreiran.', 'data' => $genre], 201);
     }
 
+    /**
+     * PUT /api/genres/{id}
+     * Ažuriranje žanra (Admin)
+     */
     public function updateGenre(Request $request, $id)
     {
         $genre = Genre::find($id);
@@ -166,6 +198,10 @@ class MovieController extends Controller
         return response()->json(['message' => 'Žanr uspešno ažuriran.', 'data' => $genre], 200);
     }
 
+    /**
+     * DELETE /api/genres/{id}
+     * Brisanje žanra (Admin)
+     */
     public function destroyGenre($id)
     {
         $genre = Genre::find($id);
