@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('year');
-            $table->string('poster_path')->nullable(); // Ovo pokriva i upload Osobe 3
+            $table->string('poster_path')->nullable();
             $table->foreignId('genre_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

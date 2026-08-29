@@ -17,18 +17,18 @@ class ExternalApiController extends Controller
         }
 
         $apiKey = config('services.omdb.key');
-        
-        // Slanje GET zahteva na OMDB API
-        $response = Http::withoutVerifying()->get("http://www.omdbapi.com/", [
+
+        $response = Http::get("http://www.omdbapi.com/", [
             'apikey' => $apiKey,
             't' => $title
         ]);
 
-        if ($response->failed()) {
-            return response()->json(['error' => 'Greska pri komunikaciji sa OMDB servisom'], 500);
-        }
-
-        return response()->json($response->json());
+        // DEBUG - privremeno, da vidimo sta OMDb stvarno vraca
+        return response()->json([
+            'status' => $response->status(),
+            'body' => $response->json(),
+            'used_key' => $apiKey,
+        ], 200);
     }
 
     // Funkcija koja povlači trenutno popularne filmove sa TMDB-a
