@@ -1,0 +1,14 @@
+$kind: http-request
+name: http://localhost:8000/api/favorites
+url: http://localhost:8000/api/favorites
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"user_id\": 1,\r
+
+    \    \"movie_id\": 1\r
+
+    }"
+order: 4000245083883181
